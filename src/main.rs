@@ -1,10 +1,8 @@
-mod util;
 mod cp;
+mod util;
 
 use std::path::PathBuf;
-use std::thread;
 
-use indicatif::{ProgressBar, ProgressStyle};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -21,20 +19,14 @@ struct Opt {
 // Parse cmdline args and call appropriate subroutine
 fn main() {
     let opt = Opt::from_args();
-    println!("{:?}", opt);
+    println!("{:#?}", opt);
 
     let dpbx_path = util::get_dpbx_path();
     println!("{:?}", dpbx_path);
 
-    // Testing progress bar
-       // create execute module that parses and executes commands
-
-    let mut children = vec![];
-    if opt.cmd.eq("cp") {
-        children.push(thread::spawn(move || cp::cp(opt.path.as_path()).unwrap()))
-    }
-
-    for child in children {
-        let _ = child.join();
-    }
+    // create execute module that parses and executes commands
+    match opt.cmd.as_str() {
+        "cp" => cp::cp(opt.path.as_path()).unwrap(),
+        _ => println!("invalid command"),
+    };
 }

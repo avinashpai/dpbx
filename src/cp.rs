@@ -2,7 +2,8 @@
  *  Copy file or directory to Dropbox directory
  * */
 
-use std::{fs,
+use std::{
+    fs,
     io::{self, copy, Read},
     path::Path,
 };
@@ -25,15 +26,17 @@ impl<T: Read> Read for CopyProgress<T> {
     }
 }
 
-pub fn cp(path: &Path) -> io::Result<u64> {
-    let bar = ProgressBar::new(1000);
-    bar.set_style(ProgressStyle::default_bar()
-    .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
-    .progress_chars("##-"));
-    for _ in 0..1000 {
+pub fn cp(path: &Path) -> io::Result<()> {
+    let bar = ProgressBar::new(100);
+    bar.set_style(
+        ProgressStyle::default_bar()
+            .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+            .progress_chars("##-"),
+    ); // basic styling as example
+    for _ in 0..100 {
         bar.inc(1);
         thread::sleep(std::time::Duration::from_millis(10));
     }
     bar.finish();
-    Ok(0)
+    Ok(())
 }

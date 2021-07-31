@@ -1,6 +1,6 @@
-use std::io;
-use std::path::PathBuf;
-use std::fs;
+extern crate dirs;
+
+use std::{fs, io, path::PathBuf};
 
 use serde::Deserialize;
 use serde_json;
@@ -15,15 +15,21 @@ struct Personal {
 
 #[derive(Debug, Deserialize)]
 struct DpbxInfo {
-   personal: Personal,
+    personal: Personal,
 }
 
+// UNIX only
+const INFO_PATH: &str = ".dropbox/info.json";
 
 // Open dropbox info.json and parses its contents into DpbxInfo struct
-// Change hardcoded path to path based on cfg!(os_type)
+// Panic if home directory cannot be found
 // Errors if file doesn't exist or json cannot be parsed to struct (only personal account for now)
 pub fn get_dpbx_path() -> io::Result<PathBuf> {
-    let info_str = fs::read_to_string("/Users/avinashpai/.dropbox/info.json")?;
+    let mut full_info_path = dirs::home_dir().expect("Home directory not found");
+    full_info_path.push(INFO_PATH);
+
+    let info_str = fs::read_to_string(full_info_path)?;
     let dpbx_info: DpbxInfo = serde_json::from_str(&info_str)?;
+
     Ok(dpbx_info.personal.path)
 }
