@@ -4,7 +4,6 @@ mod util;
 use std::path::PathBuf;
 
 use structopt::StructOpt;
-
 #[derive(Debug, StructOpt)]
 struct Opt {
     cmd: String,
@@ -26,7 +25,7 @@ fn main() {
 
     // create execute module that parses and executes commands
     match opt.cmd.as_str() {
-        "cp" => cp::cp(opt.path.as_path()).unwrap(),
+        "cp" => cp::Copier::new().cp(&opt.path).unwrap(),
         _ => println!("invalid command"),
     };
 }
